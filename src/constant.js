@@ -1,5 +1,10 @@
+export const generateUniqueId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+};
+
 export const rowData = [
   {
+    Id: generateUniqueId(),
     Name: "Abhishek",
     Dob: "06/01/2000",
     Age: 23,
@@ -9,6 +14,7 @@ export const rowData = [
     Action: "",
   },
   {
+    Id: generateUniqueId(),
     Name: "subham",
     Dob: "06/01/2000",
     Age: 23,

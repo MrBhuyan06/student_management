@@ -1,304 +1,231 @@
-import {
-  Button,
-  Grid,
-  FormControl,
-  InputLabel,
-  TextField,
-  FormHelperText,
-  MenuItem,
-  Select,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  IconButton,
-} from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
+import { generateUniqueId } from "../constant";
 
-const Model = () => {
+const Model = ({
+  rowData,
+  rowDataFn,
+  edit,
+  editDatas,
+  setEditDatas,
+  setModelOpenHandleFn,
+  IsModalOpenHandle,
+}) => {
+  console.log("edit", edit);
+  console.log("editData", editDatas);
+  const [name, setName] = useState("");
+  const [Age, setAge] = useState();
+  const [Dob, setDob] = useState("");
+  const [Std, setStd] = useState("");
+  const [Address, setAddress] = useState("");
+  const [Gender, setGender] = useState("");
+  const [rowssData, setRowssData] = useState({});
+
+  function handleAdd() {
+    setRowssData({
+      ...rowssData,
+      Id: generateUniqueId(),
+      Name: name,
+      Age: Number(Age),
+      Dob: Dob,
+      Std: Std,
+      Address: Address,
+      Gender: Gender,
+    });
+    setEditDatas([]);
+  }
+  function editHandler() {
+    const updateState = rowData.map((item) => {
+      if (item.Id === editDatas.Id) {
+        return { ...item, ...editDatas };
+      }
+      return item;
+    });
+    rowDataFn(updateState);
+    setEditDatas([]);
+  }
+
+  function closHandler() {
+    setEditDatas([]);
+
+    console.log(editDatas);
+    setModelOpenHandleFn(false);
+  }
+
   return (
     <>
-      <form
-        // onSubmit={formik.handleSubmit}
+      <div
+        className="border-2 rounded-md p-4 bg-slate-300  shadow-2xl "
         style={{
           maxHeight: "calc(100vh - 100px)",
           overflowY: "auto",
           paddingRight: "20px",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 400,
         }}
       >
-        {/* Personal info */}
-        <Typography variant="h4" align="center" mb={2} mt={4}>
-          Student Details
-        </Typography>
-        <Grid container spacing={2} mb={5}>
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(
-              //     formik.touched.registrationDate &&
-              //       formik.errors.registrationDate
-              //   )}
-            >
-              <TextField
+        {" "}
+        <div className="flex items-center  justify-between">
+          <p className="text-center text-lg font-bold ">
+            {edit ? "Edit" : "Add Student"}
+          </p>
+          <img
+            className="w-10 cursor-pointer"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCmDceIqxqEV1HwV2yYz9l0IswPDhYkjKqrUdMWfFSbg&s"
+            alt=""
+            onClick={closHandler}
+          />
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            rowDataFn([...rowData, rowssData]);
+            edit ? editHandler() : handleAdd();
+          }}
+        >
+          <div>
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">What is your name?</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Type here"
+                className="input input-bordered w-full max-w-xs"
+                onChange={(e) => {
+                  setName(e.target.value);
+
+                  setEditDatas({ ...editDatas, Name: e.target.value });
+                }}
+                value={editDatas?.Name ? editDatas.Name : ""}
+              />
+            </div>
+
+            {/* dob */}
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">What is your Dob?</span>
+              </label>
+              <input
                 type="date"
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                id="registrationDate"
-                name="registrationDate"
-                value={"demo"}
-                // onChange={}
-                label="Date Of Registration"
-                placeholder="Date Of Registration"
-                required
+                placeholder="Type here"
+                className="input input-bordered w-full max-w-xs"
+                value={editDatas?.Dob}
+                onChange={(e) => {
+                  setDob(e.target.value);
+                  setEditDatas({ ...editDatas, Dob: e.target.value });
+                }}
               />
-              {/* {formik.touched.registrationDate &&
-                formik.errors.registrationDate && (
-                  <FormHelperText error>
-                    {formik.errors.registrationDate}
-                  </FormHelperText>
-                )} */}
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(
-              //     formik.touched.firstName && formik.errors.firstName
-              //   )}
-            >
-              <TextField
-                id="firstName"
-                name="firstName"
-                // value={formik.values.firstName}
-                // onChange={formik.handleChange}
-                label="Student First Name"
-                required
-              />
-              {/* {formik.touched.firstName && formik.errors.firstName && (
-                <FormHelperText error>{formik.errors.firstName}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(
-              //     formik.touched.firstName && formik.errors.firstName
-              //   )}
-            >
-              <TextField
-                id="lastName"
-                name="lastName"
-                // value={formik.values.lastName}
-                // onChange={formik.handleChange}
-                label="Student Last Name"
-                required={true}
-              />
-              {/* {formik.touched.firstName && formik.errors.firstName && (
-                <FormHelperText error>{formik.errors.firstName}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
+            </div>
 
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(formik.touched.email && formik.errors.email)}
-            >
-              <TextField
-                id="email"
-                name="email"
-                type="email"
-                // value={formik.values.email}
-                // onChange={formik.handleChange}
-                label="Communication Email"
-                required
-              />
-              {/* {formik.touched.email && formik.errors.email && (
-                <FormHelperText error>{formik.errors.email}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(formik.touched.gender && formik.errors.gender)}
-              required
-            >
-              <InputLabel htmlFor="gender">Gender</InputLabel>
-              <Select
-                id="gender"
-                // name="gender"
-                // value={formik.values.gender}
-                // onChange={formik.handleChange}
-                label="Gender"
-              >
-                <MenuItem value="m">Male</MenuItem>
-                <MenuItem value="f">Female</MenuItem>
-                <MenuItem value="o">Other</MenuItem>
-              </Select>
-              {/* {formik.touched.gender && formik.errors.gender && (
-                <FormHelperText error>{formik.errors.gender}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              error={Boolean()
-              // formik.touched.dateOfBirth && formik.errors.dateOfBirth
-              }
-            >
-              <TextField
-                type="date"
-                fullWidth
-                InputLabelProps={{ shrink: true }}
-                id="dateOfBirth"
-                name="dateOfBirth"
-                // value={formik.values.dateOfBirth}
-                // onChange={formik.handleChange}
-                className="date-input"
-                placeholder="Date Of Birth"
-                label="Date Of Birth"
-              />
-              {/* {formik.touched.dateOfBirth && formik.errors.dateOfBirth && (
-                <FormHelperText error>
-                  {formik.errors.dateOfBirth}
-                </FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              error={Boolean()
-              // formik.touched.aadharNumber && formik.errors.aadharNumber
-              }
-            >
-              <TextField
-                id="aadharNumber"
-                name="aadharNumber"
-                // value={formik.values.aadharNumber}
-                // onChange={formik.handleChange}
-                label="Aadhar Number"
+            {/* age */}
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">What is your Age?</span>
+              </label>
+              <input
                 type="number"
+                placeholder="Type here"
+                className="input input-bordered w-full max-w-xs"
+                onChange={(e) => {
+                  setAge(e.target.value);
+
+                  setEditDatas({ ...editDatas, Age: e.target.value });
+                }}
+                value={editDatas.Age}
               />
+            </div>
 
-              {/* {formik.touched.aadharNumber && formik.errors.aadharNumber && (
-                <FormHelperText error>
-                  {formik.errors.aadharNumber}
-                </FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              error={Boolean()
-              // formik.touched.bloodGroup && formik.errors.bloodGroup
-              }
-            >
-              <InputLabel htmlFor="bloodGroup">Blood Group</InputLabel>
-              <Select
-                id="bloodGroup"
-                name="bloodGroup"
-                // value={formik.values.bloodGroup}
-                // onChange={formik.handleChange}
-                label="Blood Group"
+            {/* Std */}
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text">In Which std Do you read</span>
+              </label>
+              <select
+                className="select select-bordered"
+                onChange={(e) => {
+                  setStd(e.target.value);
+                  setEditDatas({ ...editDatas, Std: e.target.value });
+                }}
+                value={editDatas?.Std}
               >
-                <MenuItem value="A+">A+</MenuItem>
-                <MenuItem value="A-">A-</MenuItem>
-                <MenuItem value="B+">B+</MenuItem>
-                <MenuItem value="B-">B-</MenuItem>
-                <MenuItem value="AB+">AB+</MenuItem>
-                <MenuItem value="AB-">AB-</MenuItem>
-                <MenuItem value="O+">O+</MenuItem>
-                <MenuItem value="O-">O-</MenuItem>
-              </Select>
-              {/* {formik.touched.bloodGroup && formik.errors.bloodGroup && (
-                <FormHelperText error>
-                  {formik.errors.bloodGroup}
-                </FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
+                <option disabled selected>
+                  Std
+                </option>
+                <option value={1}>1</option>
+                <option value={2}>2</option>
+                <option value={3}>3</option>
+                <option value={4}>4</option>
+                <option value={5}>5</option>
+                <option value={6}>6</option>
+                <option value={7}>7</option>
+                <option value={8}>8</option>
+                <option value={9}>9</option>
+                <option value={10}>10</option>
+              </select>
+            </div>
 
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              error={Boolean()
-              // formik.touched.relligion && formik.errors.relligion
-              }
-            >
-              <InputLabel htmlFor="relligion">Relligion</InputLabel>
-              <Select
-                id="relligion"
-                name="relligion"
-                // value={formik.values.relligion}
-                // onChange={formik.handleChange}
-                label="Religion"
-              >
-                <MenuItem value="Hindu">Hindu</MenuItem>
-                <MenuItem value="Muslim">Muslim</MenuItem>
-                <MenuItem value="Sikh">Sikh</MenuItem>
-                <MenuItem value="Jain">Jain</MenuItem>
-                <MenuItem value="Buddhist">Buddhist</MenuItem>
-                <MenuItem value="Christian">Christian</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-              {/* {formik.touched.religion && formik.errors.religion && (
-                <FormHelperText error>{formik.errors.religion}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(formik.touched.caste && formik.errors.caste)}
-            >
-              <InputLabel htmlFor="caste">Caste</InputLabel>
-              <Select
-                id="caste"
-                name="caste"
-                // value={formik.values.caste}
-                // onChange={formik.handleChange}
-                label="Caste"
-              >
-                <MenuItem value="General">General</MenuItem>
-                <MenuItem value="OBC">OBC</MenuItem>
-                <MenuItem value="SC">SC</MenuItem>
-                <MenuItem value="ST">ST</MenuItem>
-                <MenuItem value="Other">Other</MenuItem>
-              </Select>
-              {/* {formik.touched.caste && formik.errors.caste && (
-                <FormHelperText error>{formik.errors.caste}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <FormControl
-              fullWidth
-              //   error={Boolean(formik.touched.subCaste && formik.errors.subCaste)}
-            >
-              <TextField
-                id="subCaste"
-                name="subCaste"
-                // value={formik.values.subCaste}
-                // onChange={formik.handleChange}
-                label="Sub Caste"
+            <div className="form-control  flex flex-row  gap-2 mt-2">
+              Male
+              <input
+                type="radio"
+                name="radio-1"
+                {...(editDatas?.Gender === "male" ? "checked" : "")}
+                onClick={(e) => {
+                  setGender(e.target.value);
+                  // setEditDatas({ ...editDatas, Gender: e.target.value });
+                }}
+                className="radio"
+                value={editDatas?.Gender ? editDatas.Gender : "male"}
               />
-              {/* {formik.touched.subCaste && formik.errors.subCaste && (
-                <FormHelperText error>{formik.errors.subCaste}</FormHelperText>
-              )} */}
-            </FormControl>
-          </Grid>
-        </Grid>
-      </form>
+              Female
+              <input
+                type="radio"
+                name="radio-1"
+                className="radio"
+                onClick={(e) => {
+                  setGender(e.target.value);
+                  // setEditDatas({ ...editDatas, Gender: e.target.value });
+                }}
+                {...(editDatas?.Gender === "female" ? "checked" : "")}
+              />
+            </div>
+
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Your Address</span>
+              </label>
+              <textarea
+                className="textarea textarea-bordered h-24"
+                placeholder="Address"
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  setEditDatas({ ...editDatas, Address: e.target.value });
+                }}
+                value={editDatas?.Address}
+              ></textarea>
+            </div>
+          </div>
+          {edit ? (
+            <button
+              // onClick={}
+              className="p-2 bg-blue-400 rounded-md hover:bg-blue-500  mt-2"
+            >
+              edit
+            </button>
+          ) : (
+            <button
+              // onClick={}
+              className="p-2 bg-blue-400 rounded-md hover:bg-blue-500  mt-2"
+            >
+              Submit
+            </button>
+          )}
+        </form>
+      </div>
     </>
   );
 };

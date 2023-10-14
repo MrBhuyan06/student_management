@@ -28,6 +28,7 @@ const MainBody = () => {
   const [IsModalOpen, setIsModalOpen] = useState(false);
   const [editValue, setEditValue] = useState(false);
   const [editData, setEditData] = useState([]);
+  const [rowsData, setRowsData] = useState([]);
   // const [open, setOpen] = React.useState(false);
   // const handleOpen = () => setOpen(true);
   // const handleClose = () => setOpen(false);
@@ -39,9 +40,23 @@ const MainBody = () => {
       setEditData(p.data);
       console.log(p.data);
     });
-    const onDelete = useCallback(() => {
-      // setIsModalOpen(!IsModalOpen);
-    });
+    const onDelete = () => {
+      const filterDelData = rowsData.filter((data) => {
+        console.log(rowsData);
+        console.log(data);
+        console.log(data.Id != p.data.Id);
+        return data.Id !== p.data.Id;
+      });
+      console.log(filterDelData);
+      setRowsData(filterDelData);
+      console.log(p.data.Name);
+    };
+
+    useEffect(() => {
+      console.log("useEffect");
+      setRowsData(rowData);
+    }, []);
+
     return (
       <>
         <div className="flex gap-2">
@@ -62,7 +77,6 @@ const MainBody = () => {
     );
   };
 
-  const [rowsData, setRowsData] = useState(rowData);
   const [colDef, setColDef] = useState([
     { field: "Name" },
     { field: "Dob" },
@@ -74,7 +88,7 @@ const MainBody = () => {
   ]);
 
   const cellClickedListener = useCallback((event) => {
-    console.log("cellClicked", event);
+    console.log("cellClicked", event.data.Id);
     // if (event.colDef.field === "Action") {
     //   setIsModalOpen(!IsModalOpen);
     // }
